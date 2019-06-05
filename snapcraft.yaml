@@ -1,0 +1,22 @@
+name: bigboxx
+base: core18
+version: git
+summary: IoT middleware from e-Cattle platform for livestock farms
+description: |
+  e-Cattle BigBoxx is a middleware to receive, rank, segment, persist and provide sensory data
+  for IoT applications in livetstock farms. 
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+apps:
+  kernel:
+#    command: kernel
+    command: sh -c \"cd $SNAP/lib/node_modules/kernel && npm start\"
+#    plugs: [network, network-bind]
+
+parts:
+  kernel:
+    plugin: nodejs
+    source: https://github.com/e-cattle/kernel.git
+    source-branch: master
