@@ -9,14 +9,42 @@ description: |
 grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: devmode # use 'strict' once you have the right plugs and slots
 
+environment:
+  SNAPCRAFT_ENABLE_DEVELOPER_DEBUG: "yes"
+
 apps:
-  kernel:
+  start:
 #    command: kernel
-    command: sh -c \"cd $SNAP/lib/node_modules/kernel && npm start\"
-#    plugs: [network, network-bind]
+    command: sh -c "cd $SNAP/kernel && node ./bin/server.js"
+    passthrough:
+      autostart: start
+    plugs: [home, network, network-bind]
 
 parts:
   kernel:
     plugin: nodejs
+    nodejs-package-manager: npm
     source: https://github.com/e-cattle/kernel.git
     source-branch: master
+    source-depth: 1
+    override-build: |
+      snapcraftctl build
+      echo "Moving from $(pwd) to $SNAPCRAFT_PART_INSTALL/kernel"
+      mkdir -p $SNAPCRAFT_PART_INSTALL/kernel
+      mv * $SNAPCRAFT_PART_INSTALL/kernel/
+  
+#  api:
+#    plugin: nodejs
+#    source: https://github.com/e-cattle/api.git
+#    source-branch: master
+#    source-depth: 1
+#    override-build: |
+#      snapcraftctl build
+#      echo "Moving from $(pwd) to $SNAPCRAFT_PART_INSTALL/api"
+#      mkdir -p $SNAPCRAFT_PART_INSTALL/api
+#      mv -R * $SNAPCRAFT_PART_INSTALL/api/
+  
+#  manager:
+#    plugin: nodejs
+#    source: https://github.com/e-cattle/manager.git
+#    source-branch: master
