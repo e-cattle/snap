@@ -13,11 +13,12 @@ environment:
   SNAPCRAFT_ENABLE_DEVELOPER_DEBUG: "yes"
 
 apps:
-  start:
-#    command: kernel
-    command: sh -c "cd $SNAP/kernel && node ./bin/server.js"
-    passthrough:
-      autostart: start
+  kernel:
+    command: sh -c "nohup node $SNAP/kernel/bin/server.js > /dev/null 2>&1 &"
+    plugs: [home, network, network-bind]
+  
+  api:
+    command: sh -c "nohup node $SNAP/api/bin/server.js > /dev/null 2>&1 &"
     plugs: [home, network, network-bind]
 
 parts:
@@ -27,22 +28,31 @@ parts:
     source: https://github.com/e-cattle/kernel.git
     source-branch: master
     source-depth: 1
+    filesets:
+      exclude: [-src,-bin,-node_modules,-package]
+    stage: [$exclude]
+    prime: [$exclude]
+    organize:
+      README.md: README.md-kernel
+      package.json: package.json-kernel
+      package-lock.json: package-lock.json-kernel
     override-build: |
       snapcraftctl build
       echo "Moving from $(pwd) to $SNAPCRAFT_PART_INSTALL/kernel"
       mkdir -p $SNAPCRAFT_PART_INSTALL/kernel
       mv * $SNAPCRAFT_PART_INSTALL/kernel/
   
-#  api:
-#    plugin: nodejs
-#    source: https://github.com/e-cattle/api.git
-#    source-branch: master
-#    source-depth: 1
-#    override-build: |
-#      snapcraftctl build
-#      echo "Moving from $(pwd) to $SNAPCRAFT_PART_INSTALL/api"
-#      mkdir -p $SNAPCRAFT_PART_INSTALL/api
-#      mv -R * $SNAPCRAFT_PART_INSTALL/api/
+  api:
+    plugin: nodejs
+    nodejs-package-manager: npm
+    source: https://github.com/e-cattle/api.git
+    source-branch: master
+    source-depth: 1
+    override-build: |
+      snapcraftctl build
+      echo "Moving from $(pwd) to $SNAPCRAFT_PART_INSTALL/api"
+      mkdir -p $SNAPCRAFT_PART_INSTALL/api
+      mv * $SNAPCRAFT_PART_INSTALL/api/
   
 #  manager:
 #    plugin: nodejs
