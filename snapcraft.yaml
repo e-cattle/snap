@@ -25,8 +25,8 @@ apps:
     command: node $SNAP/api/bin/server.js > $SNAP_USER_DATA/api.log 2>&1
     daemon: simple
   
-  backup:
-    command: mongodump --db ecattle-kernel --archive
+#  backup:
+#    command: mongodump --db ecattle-kernel --archive
 
 hooks:
   install:
