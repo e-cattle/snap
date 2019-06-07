@@ -1,0 +1,5 @@
+#!/bin/sh -e
+
+# Create a default config file
+echo "Creating MongoDB data folder..."
+mkdir -p $SNAP_USER_DATA/mongo
