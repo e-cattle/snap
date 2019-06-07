@@ -18,11 +18,11 @@ apps:
     daemon: simple
 
   kernel:
-    command: node $SNAP/kernel/bin/server.js > $SNAP_USER_DATA/kernel.log
+    command: node $SNAP/kernel/bin/server.js > $SNAP_USER_DATA/log/kernel.log 2>&1
     daemon: simple
   
   api:
-    command: node $SNAP/api/bin/server.js > $SNAP_USER_DATA/api.log
+    command: node $SNAP/api/bin/server.js > $SNAP_USER_DATA/log/api.log 2>&1
     daemon: simple
   
 #  backup:
@@ -58,8 +58,7 @@ parts:
       snapcraftctl build
       echo "Moving from $(pwd) to $SNAPCRAFT_PART_INSTALL/kernel..."
       mkdir -p $SNAPCRAFT_PART_INSTALL/kernel
-      cp -r * $SNAPCRAFT_PART_INSTALL/kernel/
-      rm -rf * > /dev/null
+      mv * $SNAPCRAFT_PART_INSTALL/kernel/
   
   api:
     plugin: nodejs
@@ -67,20 +66,12 @@ parts:
     source: https://github.com/e-cattle/api.git
     source-branch: master
     source-depth: 1
-    filesets:
-      exclude: [-src,-bin,-node_modules,-package]
-    stage: [$exclude]
-    prime: [$exclude]
-    organize:
-      README.md: README.md-api
-      package.json: package.json-api
-      package-lock.json: package-lock.json-api
+    after: [kernel]
     override-build: |
       snapcraftctl build
       echo "Moving from $(pwd) to $SNAPCRAFT_PART_INSTALL/api..."
       mkdir -p $SNAPCRAFT_PART_INSTALL/api
-      cp -r * $SNAPCRAFT_PART_INSTALL/api/
-      rm -rf *  > /dev/null
+      mv * $SNAPCRAFT_PART_INSTALL/api/
   
 #  manager:
 #    plugin: nodejs
