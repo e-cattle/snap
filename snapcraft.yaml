@@ -18,11 +18,11 @@ apps:
     daemon: simple
 
   kernel:
-    command: node $SNAP/kernel/bin/server.js > $SNAP_USER_DATA/log/kernel.log 2>&1
+    command: node $SNAP/kernel/bin/server.js
     daemon: simple
   
   api:
-    command: node $SNAP/api/bin/server.js > $SNAP_USER_DATA/log/api.log 2>&1
+    command: node $SNAP/api/bin/server.js
     daemon: simple
   
 #  backup:
